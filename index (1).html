@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ВЕЛИКИЕ ДЕРЖАВЫ — Политическая Хроника</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=IM+Fell+English+SC&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- ══════════════ ГЛАВНОЕ МЕНЮ ══════════════ -->
+<div id="screen-menu" class="screen active">
+  <div class="menu-bg">
+    <div class="noise-overlay"></div>
+    <div class="menu-vignette"></div>
+    <div class="map-grid"></div>
+  </div>
+  <div class="menu-content">
+    <div class="title-block">
+      <div class="title-year">1914 — ...</div>
+      <h1 class="main-title">ВЕЛИКИЕ<br>ДЕРЖАВЫ</h1>
+      <p class="subtitle">Политическая хроника XX века</p>
+    </div>
+    <div class="menu-buttons">
+      <button class="menu-btn primary" onclick="Game.showCountrySelect()">▶ НАЧАТЬ ИГРУ</button>
+      <button class="menu-btn" onclick="Game.showHelp()">? СПРАВКА</button>
+    </div>
+    <div class="menu-footer">Игра содержит исторических персонажей. Взгляды, выраженные персонажами — исторические, не авторские.</div>
+  </div>
+</div>
+
+<!-- ══════════════ ВЫБОР СТРАНЫ ══════════════ -->
+<div id="screen-country" class="screen">
+  <div class="country-bg"></div>
+  <div class="country-select-wrap">
+    <h2 class="section-title">ВЫБЕРИТЕ ДЕРЖАВУ</h2>
+    <p class="section-sub">Каждая страна имеет уникальный путь через историю XX века</p>
+    <div class="country-cards">
+      <div class="country-card" data-country="germany" onclick="Game.selectCountry('germany')">
+        <div class="card-flag flag-germany">🇩🇪</div>
+        <div class="card-name">ГЕРМАНИЯ</div>
+        <div class="card-era">Веймарская республика → III Рейх → ФРГ</div>
+        <div class="card-desc">От поражения в Великой войне до раздела и воссоединения. Самый драматичный путь.</div>
+        <div class="card-stats">
+          <span>⚔ Сложность: Высокая</span>
+          <span>★ Контента: Максимум</span>
+        </div>
+      </div>
+      <div class="country-card" data-country="ussr" onclick="Game.selectCountry('ussr')">
+        <div class="card-flag flag-ussr">☭</div>
+        <div class="card-name">СССР</div>
+        <div class="card-era">Революция → Сталинизм → Холодная война</div>
+        <div class="card-desc">Строительство советской империи. Коллективизация, индустриализация, победа над фашизмом.</div>
+        <div class="card-stats">
+          <span>⚔ Сложность: Средняя</span>
+          <span>★ Контента: Много</span>
+        </div>
+      </div>
+      <div class="country-card" data-country="usa" onclick="Game.selectCountry('usa')">
+        <div class="card-flag flag-usa">🇺🇸</div>
+        <div class="card-name">США</div>
+        <div class="card-era">Изоляционизм → Мировой жандарм → Холодная война</div>
+        <div class="card-desc">От нейтралитета к мировому господству. Великая депрессия, Рузвельт, ядерная эпоха.</div>
+        <div class="card-stats">
+          <span>⚔ Сложность: Низкая</span>
+          <span>★ Контента: Много</span>
+        </div>
+      </div>
+    </div>
+    <button class="menu-btn back-btn" onclick="Game.showMenu()">← НАЗАД</button>
+  </div>
+</div>
+
+<!-- ══════════════ ГЛАВНЫЙ ЭКРАН ИГРЫ ══════════════ -->
+<div id="screen-game" class="screen">
+
+  <!-- Верхняя панель HUD -->
+  <div id="hud">
+    <div class="hud-left">
+      <div class="hud-country" id="hud-country-name">ГЕРМАНИЯ</div>
+      <div class="hud-year" id="hud-year">1914</div>
+      <div class="hud-era" id="hud-era">Эпоха: Первая мировая война</div>
+    </div>
+    <div class="hud-stats">
+      <div class="stat-item">
+        <div class="stat-label">💰 Казна</div>
+        <div class="stat-bar"><div class="stat-fill money-fill" id="stat-money"></div></div>
+        <div class="stat-val" id="val-money">50</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">⚔ Армия</div>
+        <div class="stat-bar"><div class="stat-fill army-fill" id="stat-army"></div></div>
+        <div class="stat-val" id="val-army">50</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">🏭 Экономика</div>
+        <div class="stat-bar"><div class="stat-fill econ-fill" id="stat-econ"></div></div>
+        <div class="stat-val" id="val-econ">50</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">❤ Народ</div>
+        <div class="stat-bar"><div class="stat-fill pop-fill" id="stat-pop"></div></div>
+        <div class="stat-val" id="val-pop">50</div>
+      </div>
+    </div>
+    <div class="hud-right">
+      <button class="hud-btn" onclick="Game.nextTurn()">⏩ СЛЕДУЮЩИЙ ГОД</button>
+    </div>
+  </div>
+
+  <!-- Основной контент -->
+  <div id="game-main">
+
+    <!-- Левое меню навигации -->
+    <nav id="side-nav">
+      <button class="nav-btn active" data-panel="overview" onclick="Game.showPanel('overview')">
+        <span class="nav-icon">🗺</span><span>Обзор</span>
+      </button>
+      <button class="nav-btn" data-panel="domestic" onclick="Game.showPanel('domestic')">
+        <span class="nav-icon">🏛</span><span>Внутренняя<br>политика</span>
+      </button>
+      <button class="nav-btn" data-panel="foreign" onclick="Game.showPanel('foreign')">
+        <span class="nav-icon">🌍</span><span>Внешняя<br>политика</span>
+      </button>
+      <button class="nav-btn" data-panel="diplomats" onclick="Game.showPanel('diplomats')">
+        <span class="nav-icon">🎭</span><span>Персонажи</span>
+      </button>
+      <button class="nav-btn" data-panel="war" onclick="Game.showPanel('war')">
+        <span class="nav-icon">⚔</span><span>Война</span>
+      </button>
+      <button class="nav-btn" data-panel="history" onclick="Game.showPanel('history')">
+        <span class="nav-icon">📜</span><span>История</span>
+      </button>
+    </nav>
+
+    <!-- Панели контента -->
+    <div id="panels">
+
+      <!-- Обзор -->
+      <div class="panel active" id="panel-overview">
+        <h2 class="panel-title">ОБЗОР ДЕРЖАВЫ</h2>
+        <div id="overview-content"></div>
+        <div class="events-log">
+          <h3>📰 События года</h3>
+          <div id="events-list"></div>
+        </div>
+      </div>
+
+      <!-- Внутренняя политика -->
+      <div class="panel" id="panel-domestic">
+        <h2 class="panel-title">ВНУТРЕННЯЯ ПОЛИТИКА</h2>
+        <div class="policy-grid">
+          <div class="policy-section">
+            <h3>⚔ Армия и Оборона</h3>
+            <div class="policy-action" onclick="Game.doAction('army_train')">
+              <div class="action-name">Призыв и обучение войск</div>
+              <div class="action-cost">Стоимость: 15 💰 | +10 ⚔</div>
+            </div>
+            <div class="policy-action" onclick="Game.doAction('army_equip')">
+              <div class="action-name">Закупка вооружений</div>
+              <div class="action-cost">Стоимость: 20 💰 | +15 ⚔</div>
+            </div>
+            <div class="policy-action" onclick="Game.doAction('army_tech')">
+              <div class="action-name">Военные технологии</div>
+              <div class="action-cost">Стоимость: 25 💰 | +20 ⚔, -5 🏭</div>
+            </div>
+          </div>
+          <div class="policy-section">
+            <h3>🏭 Экономика</h3>
+            <div class="policy-action" onclick="Game.doAction('econ_invest')">
+              <div class="action-name">Инвестиции в промышленность</div>
+              <div class="action-cost">Стоимость: 20 💰 | +15 🏭</div>
+            </div>
+            <div class="policy-action" onclick="Game.doAction('econ_tax')">
+              <div class="action-name">Повысить налоги</div>
+              <div class="action-cost">+25 💰 | -10 ❤</div>
+            </div>
+            <div class="policy-action" onclick="Game.doAction('econ_trade')">
+              <div class="action-name">Развитие торговли</div>
+              <div class="action-cost">Стоимость: 10 💰 | +20 💰, +5 🏭</div>
+            </div>
+            <div class="policy-action" onclick="Game.doAction('econ_print')">
+              <div class="action-name">Печать денег (риск!)</div>
+              <div class="action-cost">+30 💰 | -15 🏭, риск инфляции</div>
+            </div>
+          </div>
+          <div class="policy-section">
+            <h3>❤ Народное благополучие</h3>
+            <div class="policy-action" onclick="Game.doAction('pop_food')">
+              <div class="action-name">Продовольственные программы</div>
+              <div class="action-cost">Стоимость: 15 💰 | +15 ❤</div>
+            </div>
+            <div class="policy-action" onclick="Game.doAction('pop_propaganda')">
+              <div class="action-name">Пропаганда и идеология</div>
+              <div class="action-cost">Стоимость: 10 💰 | +10 ❤, ±10 🌍</div>
+            </div>
+            <div class="policy-action" onclick="Game.doAction('pop_repress')">
+              <div class="action-name">Репрессии и террор</div>
+              <div class="action-cost">+5 💰 | -20 ❤, +5 ⚔</div>
+            </div>
+            <div class="policy-action" onclick="Game.doAction('pop_reform')">
+              <div class="action-name">Социальные реформы</div>
+              <div class="action-cost">Стоимость: 20 💰 | +25 ❤, +5 🏭</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Внешняя политика -->
+      <div class="panel" id="panel-foreign">
+        <h2 class="panel-title">ВНЕШНЯЯ ПОЛИТИКА</h2>
+        <div id="relations-list"></div>
+      </div>
+
+      <!-- Персонажи (Визуальная Новелла) -->
+      <div class="panel" id="panel-diplomats">
+        <h2 class="panel-title">ПЕРСОНАЖИ ЭПОХИ</h2>
+        <div id="characters-list"></div>
+      </div>
+
+      <!-- Война -->
+      <div class="panel" id="panel-war">
+        <h2 class="panel-title">ВОЕННОЕ КОМАНДОВАНИЕ</h2>
+        <div id="war-content"></div>
+      </div>
+
+      <!-- История -->
+      <div class="panel" id="panel-history">
+        <h2 class="panel-title">ХРОНИКА СОБЫТИЙ</h2>
+        <div id="history-list"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ ДИАЛОГОВОЕ ОКНО (Визуальная Новелла) ══════════════ -->
+<div id="dialogue-overlay" class="hidden">
+  <div id="dialogue-scene">
+    <div id="dialogue-bg"></div>
+    <div id="dialogue-character-wrap">
+      <div id="dialogue-character-img" class="char-portrait"></div>
+      <div id="dialogue-char-name-tag"></div>
+    </div>
+    <div id="dialogue-box">
+      <div id="dialogue-speaker"></div>
+      <div id="dialogue-relation-badge" class="relation-badge"></div>
+      <div id="dialogue-text"></div>
+      <div id="dialogue-choices"></div>
+    </div>
+    <button id="dialogue-close" onclick="Game.closeDialogue()">✕ ЗАКРЫТЬ</button>
+  </div>
+</div>
+
+<!-- ══════════════ УВЕДОМЛЕНИЕ ══════════════ -->
+<div id="notification" class="notification hidden">
+  <div id="notification-text"></div>
+</div>
+
+<!-- ══════════════ ЭКРАН ПОМОЩИ ══════════════ -->
+<div id="screen-help" class="screen">
+  <div class="help-wrap">
+    <h2 class="section-title">СПРАВКА</h2>
+    <div class="help-content">
+      <div class="help-block">
+        <h3>🎮 Основы</h3>
+        <p>Каждый ход = 1 год истории. Вы управляете внутренней и внешней политикой страны, следуя реальной хронологии событий.</p>
+      </div>
+      <div class="help-block">
+        <h3>📊 Статистика</h3>
+        <p><strong>💰 Казна</strong> — деньги государства. Без денег нельзя ничего делать.<br>
+        <strong>⚔ Армия</strong> — военная мощь. Важна для войн и давления.<br>
+        <strong>🏭 Экономика</strong> — производственная мощь. Влияет на рост казны.<br>
+        <strong>❤ Народ</strong> — народная поддержка. При 0 — революция!</p>
+      </div>
+      <div class="help-block">
+        <h3>🎭 Визуальная Новелла</h3>
+        <p>В разделе "Персонажи" вы можете встретиться с историческими деятелями. Ваши ответы влияют на отношения. При высоких отношениях — персонажи открывают тайны своей жизни.</p>
+      </div>
+      <div class="help-block">
+        <h3>⏳ Хронология</h3>
+        <p>Игра следует реальной истории. В 1914 — Первая мировая война. В 1939 — Вторая мировая. Появление новых персонажей и событий привязано к реальным датам.</p>
+      </div>
+    </div>
+    <button class="menu-btn" onclick="Game.showMenu()">← НАЗАД</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
